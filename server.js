@@ -14,6 +14,7 @@ require('dotenv').config({ quiet: true });
 
 const express = require('express');
 const session = require('express-session');
+const fs = require('fs');
 const path = require('path');
 
 // The session secret must come from the .env file, never from the code.
@@ -44,6 +45,38 @@ app.use(session({
 // Anyone can open the files in the public folder: home page, log in, sign up, CSS, JavaScript.
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// ---------- 2. Helper functions ----------
+
+const dataFolder = path.join(__dirname, 'data');
+
+// Create the data folder the first time the server starts.
+if (!fs.existsSync(dataFolder)) {
+  fs.mkdirSync(dataFolder);
+}
+
+// Read a list from a JSON file in the data folder (an empty list if the file does not exist yet).
+function readData(fileName) {
+  const filePath = path.join(dataFolder, fileName);
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+// Save a list to a JSON file in the data folder.
+function saveData(fileName, list) {
+  fs.writeFileSync(path.join(dataFolder, fileName), JSON.stringify(list, null, 2));
+}
+
+// Turn a value sent by the page into clean text.
+// Anything that is not text (a number, a list, nothing at all) becomes '', so it cannot crash the server.
+function cleanText(value) {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  return value.trim();
+}
 
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);

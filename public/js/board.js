@@ -192,4 +192,19 @@ form.onsubmit = async function (event) {
 };
 
 
+// ---------- Delete and log out ----------
+
+async function deleteApplication(id) {
+  if (confirm('Delete this application?')) {
+    await fetch('/api/applications/' + id, { method: 'DELETE' });
+    loadBoard();
+  }
+}
+
+document.getElementById('logout-button').onclick = async function () {
+  await fetch('/api/logout', { method: 'POST' });
+  window.location.href = '/';
+};
+
+
 loadBoard();

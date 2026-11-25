@@ -114,6 +114,31 @@ app.post('/api/signup', function (req, res) {
   res.json({ ok: true });
 });
 
+app.post('/api/login', function (req, res) {
+  const email = cleanText(req.body.email).toLowerCase();
+  const password = cleanText(req.body.password);
+  const user = readData('users.json').find(function (item) {
+    return item.email === email;
+  });
+
+  // compareSync hashes the typed password the same way and compares it with the saved hash.
+  // Same message for a wrong email and a wrong password, so nobody can find out who has an account.
+  if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+    return res.status(401).json({ error: 'Wrong email or password.' });
+  }
+
+  req.session.userId = user.id;
+  res.json({ ok: true });
+});
+
+app.post('/api/logout', function (req, res) {
+  // Delete the session, so the cookie no longer logs anyone in.
+  req.session.destroy(function () {
+    res.json({ ok: true });
+  });
+});
+
+
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);
 });

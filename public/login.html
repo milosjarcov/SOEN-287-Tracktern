@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in - Tracktern</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">Tracktern</a>
+    <nav>
+      <a href="/signup.html" class="button">Sign up</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="login-form" class="form-box">
+      <h1>Log in</h1>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required>
+
+      <p id="form-error" class="error"></p>
+      <button type="submit" class="button">Log in</button>
+      <p>New to Tracktern? <a href="/signup.html">Create an account</a></p>
+    </form>
+  </main>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>

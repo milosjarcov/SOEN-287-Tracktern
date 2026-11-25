@@ -1,0 +1,18 @@
+{
+  "name": "tracktern",
+  "version": "0.1.0",
+  "description": "Internship application tracker for students. SOEN 287 course project.",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Milos Jarcov",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.10",
+    "express": "^4.22.3",
+    "express-session": "^1.19.0"
+  }
+}

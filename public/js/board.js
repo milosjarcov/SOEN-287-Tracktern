@@ -128,4 +128,68 @@ for (const stage of stages) {
 }
 
 
+// ---------- Add and edit ----------
+
+// Opens the form: filled in to edit an application, or empty to add a new one.
+function openForm(application) {
+  form.reset();
+  formError.textContent = '';
+  editingId = null;
+  formTitle.textContent = 'Add an application';
+
+  if (application) {
+    editingId = application.id;
+    formTitle.textContent = 'Edit application';
+    companyInput.value = application.company;
+    roleInput.value = application.role;
+    linkInput.value = application.link;
+    deadlineInput.value = application.deadline;
+    stageInput.value = application.stage;
+    notesInput.value = application.notes;
+  }
+  form.hidden = false;
+}
+
+document.getElementById('add-button').onclick = function () {
+  openForm(null);
+};
+
+document.getElementById('cancel-button').onclick = function () {
+  form.hidden = true;
+};
+
+form.onsubmit = async function (event) {
+  event.preventDefault(); // stop the browser from reloading the page
+
+  // Adding uses POST. Editing uses PUT with the id in the address.
+  let method = 'POST';
+  let url = '/api/applications';
+  if (editingId !== null) {
+    method = 'PUT';
+    url = '/api/applications/' + editingId;
+  }
+
+  const response = await fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      company: companyInput.value,
+      role: roleInput.value,
+      link: linkInput.value,
+      deadline: deadlineInput.value,
+      stage: stageInput.value,
+      notes: notesInput.value
+    })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    formError.textContent = result.error; // the server's message, for example about a bad link
+    return;
+  }
+
+  form.hidden = true;
+  loadBoard();
+};
+
+
 loadBoard();

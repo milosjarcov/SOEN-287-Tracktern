@@ -93,4 +93,39 @@ function makeCard(application) {
 }
 
 
+// ---------- Drag and drop ----------
+
+for (const stage of stages) {
+  const column = document.getElementById(stage + '-cards');
+
+  // The browser does not allow dropping by default. preventDefault() allows it.
+  column.ondragover = function (event) {
+    event.preventDefault();
+  };
+
+  // A card was dropped here: give it this column's stage and save it on the server.
+  column.ondrop = async function (event) {
+    event.preventDefault();
+    const id = event.dataTransfer.getData('text/plain');
+    const application = applications.find(function (item) {
+      return item.id === id;
+    });
+    if (!application) {
+      return;
+    }
+    application.stage = stage;
+
+    const response = await fetch('/api/applications/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(application)
+    });
+    if (!response.ok) {
+      message.textContent = 'Could not move the card.';
+    }
+    loadBoard(); // draw the board again with what the server saved
+  };
+}
+
+
 loadBoard();

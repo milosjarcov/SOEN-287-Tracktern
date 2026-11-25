@@ -260,6 +260,16 @@ app.delete('/api/applications/:id', checkLogin, function (req, res) {
 });
 
 
+// ---------- 6. Errors ----------
+
+// Anything that goes wrong (for example broken JSON) ends up here instead of crashing the server.
+// The user gets a short message, the details only go to the server console.
+// Express knows this is the error handler because the function has 4 parameters.
+app.use(function (err, req, res, next) {
+  console.log('Error:', err.message);
+  res.status(500).json({ error: 'Something went wrong. Please try again.' });
+});
+
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);
 });

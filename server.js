@@ -80,6 +80,45 @@ function cleanText(value) {
   return value.trim();
 }
 
+// Take only the 6 fields of an application from the request.
+// Nothing else is kept, so nobody can send their own id or userId.
+function readApplication(body) {
+  return {
+    company: cleanText(body.company),
+    role: cleanText(body.role),
+    link: cleanText(body.link),
+    deadline: cleanText(body.deadline),
+    stage: cleanText(body.stage),
+    notes: cleanText(body.notes)
+  };
+}
+
+// Check an application. Gives back an error message, or '' when everything is fine.
+function checkApplication(application) {
+  if (application.company === '' || application.role === '') {
+    return 'Company and role are required.';
+  }
+  // Only http and https links, so a "javascript:" link can never run code when someone clicks it.
+  if (application.link !== '' && !application.link.startsWith('http://') && !application.link.startsWith('https://')) {
+    return 'The link must start with http:// or https://';
+  }
+  if (application.deadline !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(application.deadline)) {
+    return 'The deadline must be a date like 2026-11-28.';
+  }
+  if (!['saved', 'applied', 'oa', 'interview', 'offer', 'rejected'].includes(application.stage)) {
+    return 'The stage is not valid.';
+  }
+  return '';
+}
+
+// Middleware for the API: stop here if nobody is logged in.
+function checkLogin(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Please log in first.' });
+  }
+  next();
+}
+
 // ---------- 4. Sign up, log in, log out ----------
 
 app.post('/api/signup', function (req, res) {
@@ -138,6 +177,33 @@ app.post('/api/logout', function (req, res) {
   });
 });
 
+
+// ---------- 5. Applications ----------
+// Every route here uses checkLogin and only touches the logged-in user's applications.
+
+// List the logged-in user's applications.
+app.get('/api/applications', checkLogin, function (req, res) {
+  const mine = readData('applications.json').filter(function (item) {
+    return item.userId === req.session.userId;
+  });
+  res.json(mine);
+});
+
+// Add an application.
+app.post('/api/applications', checkLogin, function (req, res) {
+  const application = readApplication(req.body);
+  const error = checkApplication(application);
+  if (error !== '') {
+    return res.status(400).json({ error: error });
+  }
+  application.id = crypto.randomUUID();
+  application.userId = req.session.userId; // the owner comes from the session, never from the page
+
+  const applications = readData('applications.json');
+  applications.push(application);
+  saveData('applications.json', applications);
+  res.json(application);
+});
 
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);

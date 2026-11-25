@@ -81,3 +81,44 @@ textarea {
 .error {
   color: #b91c1c;
 }
+
+
+/* ---------- Board ---------- */
+
+/* The 6 columns side by side */
+.board {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.column {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px;
+  background-color: #e4e4e4;
+}
+
+/* Where the cards go. The height leaves room to drop a card in an empty column. */
+.cards {
+  min-height: 150px;
+}
+
+.card {
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: white;
+  border: 1px solid #ccc;
+  cursor: grab;
+  overflow-wrap: break-word; /* a very long word goes to the next line instead of sticking out */
+}
+
+.card h4,
+.card p {
+  margin: 0 0 4px;
+}
+
+.card a,
+.card button {
+  margin: 6px 6px 0 0;
+}

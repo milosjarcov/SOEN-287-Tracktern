@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your board - Tracktern</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">Tracktern</a>
+    <button id="logout-button" class="button">Log out</button>
+  </header>
+
+  <main>
+    <h1>Your applications</h1>
+    <button id="add-button" class="button">Add application</button>
+
+    <!-- The add / edit form. It stays hidden until you click "Add application" or "Edit". -->
+    <form id="application-form" class="form-box" hidden>
+      <h2 id="form-title">Add an application</h2>
+
+      <label for="company">Company</label>
+      <input id="company" type="text" required>
+
+      <label for="role">Role</label>
+      <input id="role" type="text" required>
+
+      <label for="link">Link to the posting</label>
+      <input id="link" type="text" placeholder="https://">
+
+      <label for="deadline">Deadline</label>
+      <input id="deadline" type="date">
+
+      <label for="stage">Stage</label>
+      <select id="stage">
+        <option value="saved">Saved</option>
+        <option value="applied">Applied</option>
+        <option value="oa">OA (online assessment)</option>
+        <option value="interview">Interview</option>
+        <option value="offer">Offer</option>
+        <option value="rejected">Rejected</option>
+      </select>
+
+      <label for="notes">Notes</label>
+      <textarea id="notes"></textarea>
+
+      <p id="form-error" class="error"></p>
+      <button type="submit" class="button">Save</button>
+      <button type="button" id="cancel-button" class="button">Cancel</button>
+    </form>
+
+    <p id="message" class="error"></p>
+
+    <!-- One column per stage. board.js puts the cards inside the "cards" boxes. -->
+    <div class="board">
+      <section class="column">
+        <h3>Saved</h3>
+        <div id="saved-cards" class="cards"></div>
+      </section>
+      <section class="column">
+        <h3>Applied</h3>
+        <div id="applied-cards" class="cards"></div>
+      </section>
+      <section class="column">
+        <h3>OA</h3>
+        <div id="oa-cards" class="cards"></div>
+      </section>
+      <section class="column">
+        <h3>Interview</h3>
+        <div id="interview-cards" class="cards"></div>
+      </section>
+      <section class="column">
+        <h3>Offer</h3>
+        <div id="offer-cards" class="cards"></div>
+      </section>
+      <section class="column">
+        <h3>Rejected</h3>
+        <div id="rejected-cards" class="cards"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/board.js"></script>
+</body>
+</html>

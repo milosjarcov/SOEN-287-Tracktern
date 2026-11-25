@@ -128,6 +128,17 @@ function findMine(applications, req) {
 }
 
 
+// ---------- 3. The board page ----------
+
+// board.html is in the private folder, not in public, so the server can check the login first.
+app.get('/board.html', function (req, res) {
+  if (!req.session.userId) {
+    return res.redirect('/login.html');
+  }
+  res.sendFile(path.join(__dirname, 'private', 'board.html'));
+});
+
+
 // ---------- 4. Sign up, log in, log out ----------
 
 app.post('/api/signup', function (req, res) {

@@ -122,3 +122,21 @@ textarea {
 .card button {
   margin: 6px 6px 0 0;
 }
+
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 600px) {
+  /* The columns go one under the other */
+  .board {
+    flex-direction: column;
+  }
+
+  .column {
+    flex: none;
+  }
+
+  .cards {
+    min-height: 50px;
+  }
+}

@@ -119,6 +119,15 @@ function checkLogin(req, res, next) {
   next();
 }
 
+// Find the position of the application with the id in the address that ALSO belongs to the
+// logged-in user. Gives -1 if there is none, so someone else's application is "not found".
+function findMine(applications, req) {
+  return applications.findIndex(function (item) {
+    return item.id === req.params.id && item.userId === req.session.userId;
+  });
+}
+
+
 // ---------- 4. Sign up, log in, log out ----------
 
 app.post('/api/signup', function (req, res) {
@@ -204,6 +213,41 @@ app.post('/api/applications', checkLogin, function (req, res) {
   saveData('applications.json', applications);
   res.json(application);
 });
+
+// Edit an application. The edit form and drag and drop both use this.
+app.put('/api/applications/:id', checkLogin, function (req, res) {
+  const applications = readData('applications.json');
+  const index = findMine(applications, req);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Application not found.' });
+  }
+
+  const application = readApplication(req.body);
+  const error = checkApplication(application);
+  if (error !== '') {
+    return res.status(400).json({ error: error });
+  }
+  application.id = req.params.id;
+  application.userId = req.session.userId;
+
+  applications[index] = application; // replace the old version
+  saveData('applications.json', applications);
+  res.json(application);
+});
+
+// Delete an application.
+app.delete('/api/applications/:id', checkLogin, function (req, res) {
+  const applications = readData('applications.json');
+  const index = findMine(applications, req);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Application not found.' });
+  }
+
+  applications.splice(index, 1); // remove 1 item at that position
+  saveData('applications.json', applications);
+  res.json({ ok: true });
+});
+
 
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);

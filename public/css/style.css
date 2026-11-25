@@ -50,3 +50,34 @@ footer {
   text-decoration: none;
   cursor: pointer;
 }
+
+
+/* ---------- Forms ---------- */
+
+/* The white box around a form */
+.form-box {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+}
+
+label {
+  display: block;
+  margin: 12px 0 4px;
+  font-weight: bold;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box; /* keeps the padding inside the 100% width */
+  padding: 8px;
+  font-size: 15px;
+}
+
+.error {
+  color: #b91c1c;
+}

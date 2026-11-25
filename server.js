@@ -14,8 +14,10 @@ require('dotenv').config({ quiet: true });
 
 const express = require('express');
 const session = require('express-session');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 // The session secret must come from the .env file, never from the code.
 if (!process.env.SESSION_SECRET) {
@@ -77,6 +79,40 @@ function cleanText(value) {
   }
   return value.trim();
 }
+
+// ---------- 4. Sign up, log in, log out ----------
+
+app.post('/api/signup', function (req, res) {
+  const name = cleanText(req.body.name);
+  const email = cleanText(req.body.email).toLowerCase();
+  const password = cleanText(req.body.password);
+
+  // Check everything here, even though the browser checks the form too.
+  if (name === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) {
+    return res.status(400).json({ error: 'Enter your name, a valid email and a password of at least 8 characters.' });
+  }
+
+  const users = readData('users.json');
+  const existingUser = users.find(function (item) {
+    return item.email === email;
+  });
+  if (existingUser) {
+    return res.status(409).json({ error: 'An account with this email already exists.' });
+  }
+
+  const user = {
+    id: crypto.randomUUID(),
+    name: name,
+    email: email,
+    // Never save the real password. bcrypt turns it into a hash that cannot be turned back.
+    passwordHash: bcrypt.hashSync(password, 10)
+  };
+  users.push(user);
+  saveData('users.json', users);
+
+  req.session.userId = user.id; // log the new user in right away
+  res.json({ ok: true });
+});
 
 app.listen(PORT, function () {
   console.log('Tracktern is running at http://localhost:' + PORT);
